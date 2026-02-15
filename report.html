@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeClick - Report</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html"><i class="fas fa-home"></i> Landing</a>
+            <a href="detector.html"><i class="fas fa-search"></i> Detector</a>
+            <a href="report.html"><i class="fas fa-exclamation-triangle"></i> Report</a>
+            <a href="dashboard.html"><i class="fas fa-chart-bar"></i> Dashboard</a>
+        </nav>
+    </header>
+    <main>
+        <div class="card">
+            <h2><i class="fas fa-exclamation-triangle"></i> Scam Simulator & Reporting</h2>
+            <p>Report a scam or try the interactive demo.</p>
+            <div class="fake-ad">
+                <p>🔥 Unlock Premium for ₹1 Today Only!</p>
+                <button class="btn" onclick="showPopup()">Continue for ₹1</button>
+            </div>
+            <div id="popup" class="popup">
+                <p>⚠️ Hidden Subscription Activated</p>
+                <p>₹599 recurring charge</p>
+                <p>Auto-debit enabled</p>
+                <p>Cancellation complex</p>
+                <p>This is how dark patterns exploit urgency and low pricing.</p>
+                <button class="btn" onclick="hidePopup()">Close</button>
+            </div>
+        </div>
+        <div class="card">
+            <h2><i class="fas fa-flag"></i> Report Your Problem</h2>
+            <p>Use this form to report scams, suspicious websites, or cyber threats. Your report will be emailed for review.</p>
+            <form id="reportForm" action="mailto:report@safeclick.com" method="post" enctype="text/plain">
+                <input type="text" id="name" name="Name" placeholder="Your Name" required>
+                <input type="email" id="email" name="Email" placeholder="Your Email (optional)">
+                <input type="text" id="url" name="URL" placeholder="Suspicious URL or description (optional)">
+                <textarea id="description" name="Description" placeholder="Describe the problem (e.g., scam details, dark patterns)" rows="4" required></textarea>
+                <button type="submit" class="btn">Submit Report</button>
+            </form>
+            <div id="formMessage" style="display: none; margin-top: 20px;">
+                <p>✅ Thank you! Your report has been submitted via email. Authorities will review it.</p>
+            </div>
+        </div>
+        <div class="card">
+            <h2><i class="fas fa-users"></i> Community Forum</h2>
+            <p>Discuss threats, share tips, and engage with others to strengthen digital resilience.</p>
+            <textarea id="commentInput" placeholder="Share your thoughts or report a tip..." rows="3"></textarea>
+            <button class="btn" onclick="postComment()">Post Comment</button>
+            <div id="comments" style="margin-top: 20px;"></div>
+        </div>
+    </main>
+    <script>
+        function addPoints(user, points) {
+            let leaderboard = JSON.parse(localStorage.getItem('safeclickLeaderboard')) || {};
+            leaderboard[user] = (leaderboard[user] || 0) + points;
+            localStorage.setItem('safeclickLeaderboard', JSON.stringify(leaderboard));
+        }
+
+        function showPopup() { document.getElementById('popup').style.display = 'block'; }
+        function hidePopup() { document.getElementById('popup').style.display = 'none'; }
+        document.getElementById('reportForm').addEventListener('submit', function() {
+            document.getElementById('formMessage').style.display = 'block';
+            addPoints(document.getElementById('name').value || 'Anonymous', 20);
+        });
+
+        function postComment() {
+            const comment = document.getElementById('commentInput').value;
+            if (comment.trim()) {
+                let comments = JSON.parse(localStorage.getItem('safeclickComments')) || [];
+                comments.push({ text: comment, date: new Date().toISOString() });
+                localStorage.setItem('safeclickComments', JSON.stringify(comments));
+                document.getElementById('commentInput').value = '';
+                loadComments();
+                addPoints('Anonymous User', 5);
+            }
+        }
+
+        function loadComments() {
+            const comments = JSON.parse(localStorage.getItem('safeclickComments')) || [];
+            const commentsDiv = document.getElementById('comments');
+            commentsDiv.innerHTML = comments.map(c => `<div class="comment"><p>${c.text}</p><small>${new Date(c.date).toLocaleString()}</small></div>`).join('');
+        }
+
+        window.onload = loadComments;
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeClick - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html"><i class="fas fa-home"></i> Landing</a>
+            <a href="detector.html"><i class="fas fa-search"></i> Detector</a>
+            <a href="report.html"><i class="fas fa-exclamation-triangle"></i> Report</a>
+            <a href="dashboard.html"><i class="fas fa-chart-bar"></i> Dashboard</a>
+        </nav>
+    </header>
+    <main>
+        <div class="card">
+            <h2><i class="fas fa-chart-bar"></i> Authority Dashboard</h2>
+            <div class="stats">
+                <div class="stat-card" id="totalReports">0<br>Total Reports</div>
+                <div class="stat-card" id="highRiskAlerts">0<br>High Risk Alerts</div>
+                <div class="stat-card" id="instagramCases">0<br>Instagram-based Cases</div>
+                <div class="stat-card" id="monthlyGrowth">0%<br>Monthly Growth</div>
+            </div>
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+                <div style="width: 300px; height: 200px;">
+                    <canvas id="barChart"></canvas>
+                    <p>Bar Chart: Fraud Types (from Analyses)</p>
+                </div>
+                <div style="width: 300px; height: 200px;">
+                    <canvas id="pieChart"></canvas>
+                    <p>Pie Chart: Platform Sources (from Reports)</p>
+                </div>
+            </div>
+            <p>Line Graph (Trend): Increasing over time (based on user data)</p>
+            <h3><i class="fas fa-trophy"></i> Community Leaderboard</h3>
+            <div id="leaderboard"></div>
+        </div>
+    </main>
+    <script>
+        // Load data from localStorage
+        const reports = JSON.parse(localStorage.getItem('safeclickReports')) || [];
+        const analyses = JSON.parse(localStorage.getItem('safeclickAnalyses')) || [];
+
+        // Update stats
+        document.getElementById('totalReports').innerHTML = reports.length + '<br>Total Reports';
+        const highRisk = analyses.filter(a => a.riskLevel === 'High').length;
+        document.getElementById('highRiskAlerts').innerHTML = highRisk + '<br>High Risk Alerts';
+        const instagram = reports.filter(r => r.description.toLowerCase().includes('instagram')).length;
+        document.getElementById('instagramCases').innerHTML = instagram + '<br>Instagram-based Cases';
+        const growth = analyses.length > 0 ? Math.round((analyses.length / 10) * 100) : 0;
+        document.getElementById('monthlyGrowth').innerHTML = growth + '%<br>Monthly Growth';
+
+        // Bar Chart (Fraud Types from Analyses)
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        const fraudTypes = { Subscription: 0, Phishing: 0, Other: 0 };
+        analyses.forEach(a => {
+            if (a.url.toLowerCase().includes('subscription')) fraudTypes.Subscription++;
+            else if (a.url.toLowerCase().includes('phish')) fraudTypes.Phishing++;
+            else fraudTypes.Other++;
+        });
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(fraudTypes),
+                datasets: [{
+                    label: 'Detections',
+                    data: Object.values(fraudTypes),
+                    backgroundColor: ['#00d4ff', '#8a2be2', '#ff6b6b'],
+                }]
+            },
+            options: { responsive: true, plugins: { legend: { display: false } } }
+        });
+
+        // Pie Chart (Platform Sources from Reports)
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        const sources = { 'Social Media': 0, Websites: 0, Ads: 0 };
+        reports.forEach(r => {
+            if (r.description.toLowerCase().includes('social') || r.description.toLowerCase().includes('instagram')) sources['Social Media']++;
+            else if (r.url.includes('http')) sources.Websites++;
+            else sources.Ads++;
+        });
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(sources),
+                datasets: [{
+                    data: Object.values(sources),
+                    backgroundColor: ['#00d4ff', '#8a2be2', '#ff6b6b'],
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        // Leaderboard
+        function loadLeaderboard() {
+            const leaderboard = JSON.parse(localStorage.getItem('safeclickLeaderboard')) || {};
+            const sorted = Object.entries(leaderboard).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            const board = document.getElementById('leaderboard');
+            board.innerHTML = sorted.map(([user, points], index) => 
+                `<div class="leader"><span>${index + 1}. ${user}</span><span>${points} pts</span></div>`
+            ).join('') || '<p>No leaders yet—start engaging!</p>';
+        }
+        loadLeaderboard();
+    </script>
+</body>
+</html>

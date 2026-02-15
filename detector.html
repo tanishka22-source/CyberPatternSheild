@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeClick - Detector</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html"><i class="fas fa-home"></i> Landing</a>
+            <a href="detector.html"><i class="fas fa-search"></i> Detector</a>
+            <a href="report.html"><i class="fas fa-exclamation-triangle"></i> Report</a>
+            <a href="dashboard.html"><i class="fas fa-chart-bar"></i> Dashboard</a>
+        </nav>
+    </header>
+    <main>
+        <div class="card">
+            <h2><i class="fas fa-search"></i> Dark Pattern Detector</h2>
+            <input type="text" id="urlInput" placeholder="Paste suspicious website URL here...">
+            <button class="btn" onclick="analyzeURL()">Analyze Risk</button>
+            <div id="result"></div>
+        </div>
+    </main>
+    <script>
+        function addPoints(user, points) {
+            let leaderboard = JSON.parse(localStorage.getItem('safeclickLeaderboard')) || {};
+            leaderboard[user] = (leaderboard[user] || 0) + points;
+            localStorage.setItem('safeclickLeaderboard', JSON.stringify(leaderboard));
+        }
+
+        function analyzeURL() {
+            const url = document.getElementById('urlInput').value;
+            const result = document.getElementById('result');
+            const scamKeywords = ['trial', 'recurring', 'free', 'win', 'urgent', 'limited', 'offer', 'discount', 'subscribe', 'click here'];
+            const foundKeywords = scamKeywords.filter(keyword => url.toLowerCase().includes(keyword));
+            let riskLevel = 'Low', riskColor = '🟢', warning = 'This URL appears safe, but always verify manually.', tips = 'Tip: Check for HTTPS and avoid sharing personal info.';
+            if (foundKeywords.length > 0) {
+                if (foundKeywords.length >= 3) { riskLevel = 'High'; riskColor = '🔴'; warning = 'High risk detected! Possible scam or dark pattern.'; tips = 'Tip: Do not enter payment details. Report to authorities.'; }
+                else { riskLevel = 'Medium'; riskColor = '🟡'; warning = 'Medium risk detected. Watch for hidden charges.'; tips = 'Tip: Read terms carefully and cancel if needed.'; }
+            }
+            if (url.length > 50) { riskLevel = riskLevel === 'Low' ? 'Medium' : riskLevel; warning += ' (Long URLs can hide redirects.)'; }
+            result.innerHTML = `<p>${riskColor} Risk Level: ${riskLevel}</p><p>⚠️ Detected Terms: ${foundKeywords.length > 0 ? foundKeywords.join(', ') : 'None'}</p><div class="warning">${warning}</div><p>${tips}</p>`;
+            result.style.display = 'block';
+            addPoints('Anonymous User', 10);
+        }
+    </script>
+</body>
+</html>
