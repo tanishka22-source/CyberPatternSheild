@@ -1,0 +1,20 @@
+SafeClick is a cutting-edge web platform designed to combat cyber fraud in smart city initiatives. It empowers citizens to detect, report, and discuss digital threats while providing authorities with real-time insights. Built for public safety, it integrates awareness campaigns, reporting tools, educational dashboards, and community engagement to strengthen digital resilience at a city-wide level. This prototype demonstrates innovative gamification and data-driven monitoring, making cybersecurity accessible and interactive.
+
+The platform addresses the problem statement by offering:
+
+Awareness Campaigns: Interactive demos and stats to educate users.
+Reporting Tools: User-friendly forms for scam submissions.
+Educational Dashboards: Visual analytics for threat trends.
+Threat Guidance: Real-time URL analysis with risk levels and tips.
+Localized Data Insights: Dynamic charts and stats from user inputs.
+Community Engagement: Forum and leaderboard to foster participation.
+Features
+Landing Page: Hero section with stats, navigation, and call-to-action buttons.
+Dark Pattern Detector: Analyze URLs for scam keywords, providing risk levels, warnings, and tips.
+Scam Simulator & Reporting: Interactive popup demo of dark patterns, plus a form to report issues via email.
+Community Forum: Post comments and tips to engage users.
+Authority Dashboard: Real-time stats, bar/pie charts (using Chart.js), and a gamified leaderboard.
+Gamification: Earn points for actions (10 for analysis, 20 for reports, 5 for comments) to encourage participation.
+Visual Design: Futuristic dark theme with animated colorful backgrounds, glowing effects, floating particles, and full-page coverage for an immersive experience.
+Responsive: Works on desktop, tablet, and mobile.
+Data Persistence: Uses localStorage for reports, analyses, comments, and leaderboard—no backend required.
